@@ -1,79 +1,105 @@
 # EchoWorld Nexus - AI Financial Guardian for Global Mobility
 
 ## Overview
+EchoWorld Nexus is a comprehensive Streamlit-based financial simulation tool that helps users plan international relocations. It provides AI-powered guidance, Visa Transaction Controls (VTC) simulation, Monte Carlo financial projections, and blockchain-based credential verification.
 
-EchoWorld Nexus is an AI-powered financial guardian simulator that helps users plan their international relocation finances. The application simulates financial scenarios with Visa Transaction Controls (VTC), Monte Carlo alternative paths, RAG-powered data insights, audio guidance, and DeFi NFT features.
+## Recent Changes (December 2024)
+- Expanded to 12 countries with comprehensive PPP and visa requirement data
+- Added VTC Sandbox API integration for real-time transaction testing
+- Implemented multi-user collaborative budgeting features
+- Added voice input for conversational financial guidance
+- Created Three.js visualization dashboard for immersive data exploration
+- Added DAO governance for decentralized mobility communities
 
-**Tagline:** "Simulate your abroad finances securely—get audio guidance from your future self, powered by Visa controls and DeFi insights."
-
-## Architecture
+## Project Architecture
 
 ### Core Modules
+- `app.py` - Main Streamlit application with 6 feature tabs
+- `data_module.py` - Cost of living data for 12 countries, visa requirements, PPP indexes
+- `vtc_engine.py` - Local VTC transaction simulation
+- `vtc_api.py` - Visa VTC Sandbox API client integration
+- `monte_carlo_engine.py` - Financial path simulation with 100 scenarios
+- `ai_guidance.py` - OpenAI-powered personalized guidance generation
+- `tts_module.py` - Google TTS audio guidance with ethical watermarks
+- `rag_module.py` - RAG-powered data retrieval using LangChain + FAISS
 
-| Module | Purpose |
-|--------|---------|
-| `app.py` | Main Streamlit dashboard integrating all features |
-| `data_module.py` | Cost of living data for Germany/Japan, VTC rules, World Bank indicators |
-| `rag_module.py` | RAG (Retrieval-Augmented Generation) system with FAISS vector store |
-| `vtc_engine.py` | Visa Transaction Controls simulation with approval/decline logic |
-| `monte_carlo_engine.py` | Monte Carlo simulation for alternative financial paths |
-| `ai_guidance.py` | OpenAI integration for personalized financial guidance with RAG context |
-| `tts_module.py` | Text-to-speech audio guidance with ethical watermarks (gTTS) |
-| `nft_module.py` | Polygon testnet Mobility Passport NFT minting |
-| `pdf_export.py` | PDF export for financial roadmap reports (ReportLab) |
+### New Feature Modules
+- `collaborative.py` - Multi-user collaborative budget planning
+- `voice_input.py` - Voice transcription and conversational AI
+- `visualization_3d.py` - Three.js 3D data visualization
+- `dao_governance.py` - DAO governance and NFT minting for mainnet/testnet
 
-### Data Flow
+### Supporting Modules
+- `nft_module.py` - Mobility Passport NFT metadata and minting
+- `pdf_export.py` - PDF report generation
 
-1. User inputs financial profile (salary, savings, destination)
-2. RAG system retrieves relevant cost of living and visa data
-3. VTC engine simulates transaction approvals/declines
-4. Monte Carlo engine generates alternative financial paths
-5. AI generates personalized audio guidance using RAG context
-6. User can export PDF report or mint NFT passport
+## Supported Countries (12 Total)
+1. Germany (Berlin, Munich, Frankfurt)
+2. Japan (Tokyo, Osaka)
+3. United States (New York, San Francisco, Austin)
+4. United Kingdom (London, Manchester)
+5. Canada (Toronto, Vancouver)
+6. Australia (Sydney, Melbourne)
+7. Netherlands (Amsterdam, Rotterdam)
+8. Singapore
+9. France (Paris, Lyon)
+10. Spain (Barcelona, Madrid)
+11. UAE (Dubai, Abu Dhabi)
+12. Portugal (Lisbon, Porto)
 
-## Features
+## Key Features
 
-- **2 Countries Supported:** Germany (Berlin, Munich), Japan (Tokyo, Osaka)
-- **VTC Profiles:** Standard, Conservative, Flexible
-- **RAG-Powered Data:** Cross-verified Numbeo + World Bank data with confidence scoring
-- **Audio Guidance:** TTS with ethical disclaimers
-- **Monte Carlo:** 100 simulations, 1-3 alternative paths
-- **NFT Minting:** Polygon Amoy testnet support
-- **PDF Export:** Comprehensive financial roadmap
+### 1. Financial Simulation
+- Monte Carlo analysis with 100 scenarios
+- VTC transaction control simulation
+- Multi-path savings projections
 
-## Configuration
+### 2. VTC Sandbox API
+- Real-time transaction authorization testing
+- Session-based transaction history
+- Analytics and reporting
 
-### Environment Variables
+### 3. Collaborative Planning
+- Multi-user budget sharing
+- Income-based expense splitting
+- Invite code system for partners/family
 
-- `OPENAI_API_KEY` - Required for AI guidance and vector embeddings (RAG)
-- Without API key, app falls back to template guidance and keyword search
+### 4. Voice Assistant
+- Text-based conversational interface
+- Intent parsing for financial queries
+- Context-aware responses
 
-### Running the App
+### 5. 3D Visualization
+- Global cost comparison map
+- 3D bar charts for cost analysis
+- Monte Carlo path visualization
+- VTC transaction flow diagrams
 
+### 6. DAO Governance
+- Community creation and management
+- Proposal creation and voting
+- NFT passport minting (testnet/mainnet)
+- Voting power based on NFT tier
+
+## Environment Variables
+- `OPENAI_API_KEY` - For AI guidance and voice transcription
+- `VISA_VTC_SANDBOX_KEY` - Optional: For live VTC API (sandbox mode works without)
+
+## Running the Application
 ```bash
-streamlit run app.py --server.port 5000
+streamlit run app.py --server.port 5000 --server.address 0.0.0.0 --server.headless true
 ```
 
-## Tech Stack
-
-- **Frontend:** Streamlit
-- **Backend:** Python 3.11
-- **AI/ML:** OpenAI GPT-5, LangChain, FAISS
-- **Audio:** gTTS
-- **DeFi:** Web3.py (Polygon Amoy)
-- **PDF:** ReportLab
-- **Data Viz:** Plotly
-
-## Recent Changes
-
-- **Dec 2024:** Initial MVP with all core features
-- RAG system with fallback to keyword search
-- VTC simulation with 3 profile types
-- Monte Carlo with salary/expense/side-income variables
-- NFT minting preparation for Polygon testnet
+## Technology Stack
+- **Frontend**: Streamlit with custom CSS styling
+- **Data Visualization**: Plotly, Three.js
+- **AI/ML**: OpenAI GPT, LangChain, FAISS for RAG
+- **Blockchain**: Web3.py, Polygon (Amoy testnet / Mainnet)
+- **Audio**: Google TTS (gTTS)
+- **PDF**: ReportLab
 
 ## User Preferences
-
-- Clean, modern UI with gradient accents
-- Privacy-first: no data stored, ethical watermarks in audio
-- Cross-verified data with confidence scoring
+- Modern, clean UI with gradient styling
+- Privacy-first: No personal data storage
+- Ethical AI: Watermarked audio guidance
+- Cross-verified data from multiple sources
