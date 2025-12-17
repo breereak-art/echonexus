@@ -27,6 +27,7 @@ from nft_module import (
     get_nft_preview_card, check_web3_availability
 )
 from pdf_export import generate_financial_roadmap_pdf, get_pdf_filename
+from rag_module import get_rag_retriever, query_cost_of_living
 
 
 st.set_page_config(
@@ -669,9 +670,51 @@ def display_export_section(country, city, salary, savings, vtc_summary, mc_resul
 
 
 def display_data_preview(country, city):
-    """Display data preview before simulation"""
+    """Display data preview before simulation with RAG-powered insights"""
     
     st.header("Data Preview")
+    
+    rag = get_rag_retriever()
+    rag_status = rag.get_status()
+    
+    col1, col2, col3 = st.columns([2, 2, 1])
+    with col1:
+        if rag_status.get("initialized"):
+            if rag_status.get("fallback_mode"):
+                st.info(f"RAG System: Keyword Mode ({rag_status.get('num_documents', 0)} docs indexed)")
+            else:
+                st.success(f"RAG System: Vector Search Active ({rag_status.get('num_documents', 0)} docs)")
+        else:
+            st.warning("RAG System: Initializing...")
+    
+    with col2:
+        st.caption(f"Data Sources: Numbeo + World Bank (Cross-Verified)")
+    
+    with col3:
+        st.caption(f"Vector Store: {rag_status.get('vector_store_type', 'N/A')}")
+    
+    st.divider()
+    
+    with st.expander("Ask the Data (RAG Query)", expanded=False):
+        rag_query = st.text_input(
+            "Ask about cost of living, visa requirements, or salaries:",
+            placeholder=f"e.g., What is the rent in {city}?",
+            key="rag_query_input"
+        )
+        if rag_query:
+            with st.spinner("Querying RAG system..."):
+                result = query_cost_of_living(rag_query, country=country, city=city)
+                
+                if result.get("success") and result.get("results"):
+                    st.markdown(f"**Confidence:** {result.get('confidence', 0)*100:.0f}% | **Mode:** {result.get('mode', 'unknown')}")
+                    
+                    for i, doc in enumerate(result["results"][:2], 1):
+                        st.markdown(f"**Source {i}:** {doc.get('source', 'Unknown')}")
+                        st.text(doc.get("content", "")[:500] + "..." if len(doc.get("content", "")) > 500 else doc.get("content", ""))
+                else:
+                    st.warning("No relevant data found. Try a different query.")
+    
+    st.divider()
     
     col_data = get_cost_of_living(country, city)
     wb_data = get_world_bank_data(country)

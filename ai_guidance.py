@@ -1,11 +1,13 @@
 """
 AI Guidance Module for EchoWorld Nexus
-Generates personalized financial guidance using OpenAI
+Generates personalized financial guidance using OpenAI with RAG-grounded data
 """
 
 import os
 import json
 from typing import Dict, Any, List
+
+from rag_module import get_rag_context_for_guidance, get_rag_retriever
 
 
 def get_openai_client():
@@ -69,12 +71,20 @@ def generate_ai_guidance(
     user_salary: float,
     user_savings: float
 ) -> str:
-    """Generate guidance using OpenAI"""
+    """Generate guidance using OpenAI with RAG-grounded context"""
     
     top_path = monte_carlo_results["top_paths"][0] if monte_carlo_results.get("top_paths") else None
     
+    rag_context = get_rag_context_for_guidance(country, city)
+    
+    # the newest OpenAI model is "gpt-5" which was released August 7, 2025.
+    # do not change this unless explicitly requested by the user
     context = f"""
     You are a Financial Guardian - a friendly, supportive AI advisor helping someone plan their move to {city}, {country}.
+    
+    IMPORTANT: Use the following RAG-retrieved, cross-verified data to ground your advice:
+    
+    {rag_context}
     
     User Financial Profile:
     - Expected Salary: €{user_salary:,.0f}/month
@@ -92,12 +102,13 @@ def generate_ai_guidance(
     
     Generate a warm, encouraging 60-second audio guidance script (about 150 words) that:
     1. Greets them as their "Financial Guardian from {country}"
-    2. Summarizes their financial readiness
+    2. Summarizes their financial readiness using SPECIFIC numbers from the RAG data
     3. Explains how VTC can protect their budget
-    4. Recommends their best path forward
+    4. Recommends their best path forward with data-backed reasoning
     5. Ends with an encouraging message
     
-    Keep it conversational and supportive. This is for text-to-speech, so write naturally.
+    Keep it conversational and supportive. Reference specific costs from the data (like rent, visa requirements).
+    This is for text-to-speech, so write naturally.
     End with: "Remember, this is a simulated planning tool to help you prepare."
     """
     
@@ -105,7 +116,7 @@ def generate_ai_guidance(
         response = client.chat.completions.create(
             model="gpt-5",
             messages=[
-                {"role": "system", "content": "You are a warm, supportive financial advisor helping people plan international moves."},
+                {"role": "system", "content": "You are a warm, supportive financial advisor helping people plan international moves. Always ground your advice in the specific data provided."},
                 {"role": "user", "content": context}
             ],
             max_completion_tokens=500
