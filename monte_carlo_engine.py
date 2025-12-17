@@ -7,12 +7,15 @@ import numpy as np
 from typing import Dict, List, Any
 
 
+from typing import Optional
+
 def run_monte_carlo(
     base_salary: float = 2000,
     base_expenses: float = 1500,
-    variables: Dict[str, List[float]] = None,
+    variables: Optional[Dict[str, List[float]]] = None,
     num_sims: int = 100,
-    months: int = 12
+    months: int = 12,
+    seed: Optional[int] = None
 ) -> Dict[str, Any]:
     """
     Run Monte Carlo simulation for financial outcomes
@@ -23,10 +26,14 @@ def run_monte_carlo(
         variables: Dict of variable names to possible values/boosts
         num_sims: Number of simulations to run
         months: Number of months to simulate
+        seed: Optional random seed for reproducible results
         
     Returns:
         Dict with top paths, statistics, and recommendations
     """
+    
+    if seed is not None:
+        np.random.seed(seed)
     
     if variables is None:
         variables = {

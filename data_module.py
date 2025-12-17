@@ -758,7 +758,9 @@ SAMPLE_TRANSACTIONS = [
 ]
 
 
-def get_cost_of_living(country: str, city: str = None) -> dict:
+from typing import Optional, Dict, Any, List
+
+def get_cost_of_living(country: str, city: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """Get cost of living data for a country/city"""
     if country not in COST_OF_LIVING_DATA:
         return None
@@ -783,14 +785,14 @@ def get_countries() -> list:
     return list(COST_OF_LIVING_DATA.keys())
 
 
-def get_world_bank_data(country: str) -> dict:
+def get_world_bank_data(country: str) -> Optional[Dict[str, Any]]:
     """Get World Bank indicators for a country"""
-    return WORLD_BANK_DATA.get(country, None)
+    return WORLD_BANK_DATA.get(country)
 
 
-def get_visa_requirements(country: str) -> dict:
+def get_visa_requirements(country: str) -> Optional[Dict[str, Any]]:
     """Get visa requirements for a country"""
-    return VISA_REQUIREMENTS.get(country, None)
+    return VISA_REQUIREMENTS.get(country)
 
 
 def get_vtc_rules(profile: str = "standard") -> dict:
@@ -826,7 +828,7 @@ def calculate_confidence_score(col_data: dict, wb_data: dict) -> float:
     return min(0.98, base_confidence)
 
 
-def get_monthly_expenses(country: str, city: str = None) -> dict:
+def get_monthly_expenses(country: str, city: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """Calculate typical monthly expenses"""
     col_data = get_cost_of_living(country, city)
     if not col_data:
