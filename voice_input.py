@@ -156,8 +156,8 @@ def parse_financial_query(text: str) -> Dict[str, Any]:
 
 def generate_conversational_response(
     query_result: Dict[str, Any],
-    country: str = None,
-    city: str = None
+    country: Optional[str] = None,
+    city: Optional[str] = None
 ) -> str:
     """
     Generate a conversational response based on parsed query
@@ -338,7 +338,7 @@ class VoiceConversationManager:
             "context": self.context
         }
     
-    def set_context(self, country: str = None, city: str = None):
+    def set_context(self, country: Optional[str] = None, city: Optional[str] = None):
         """Set conversation context"""
         if country:
             self.context["country"] = country
