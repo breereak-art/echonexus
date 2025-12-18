@@ -3,7 +3,16 @@
 ## Overview
 EchoWorld Nexus is a comprehensive Streamlit-based financial simulation tool that helps users plan international relocations. It provides AI-powered guidance, Visa Transaction Controls (VTC) simulation, Monte Carlo financial projections, and blockchain-based credential verification.
 
-## Recent Changes (December 17, 2025)
+## Recent Changes (December 18, 2025)
+- **Professional UI Redesign**: Complete visual overhaul with modern dark-themed hero cards
+- **New Color Palette**: Gradient accents (indigo/violet), clean typography with Inter font
+- **Enhanced Hero Cards**: Dark gradient backgrounds with colored top borders and shadows
+- **Improved Proof of Funds**: Dynamic coloring (green/red) based on funding status
+- **Polished Components**: Rounded cards, better spacing, modern button styling
+- **Tab Styling**: Clean tab navigation with hover effects
+- **Chat UI**: Updated chat bubbles with gradient backgrounds
+
+### Previous Updates (December 17, 2025)
 - **UI Overhaul**: Restructured from 6 tabs to 3 focused tabs for better demo flow
 - **Hero Dashboard**: Added 4 key metrics at the top (Data Confidence, PoF, Salary, VTC)
 - **Proof of Funds Verification**: New PoF feature with progress bar and visa risk alerts

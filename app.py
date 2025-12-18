@@ -58,130 +58,364 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    .stApp {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
     .main-header {
-        font-size: 2.8rem;
-        font-weight: 700;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #8b5cf6 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        background-clip: text;
         text-align: center;
         padding: 0.5rem 0;
         margin-bottom: 0;
+        letter-spacing: -0.02em;
     }
+    
     .tagline {
         text-align: center;
-        color: #666;
-        font-size: 1rem;
-        margin-bottom: 1.5rem;
+        color: #64748b;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        font-weight: 400;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
     }
+    
     .hero-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
         padding: 1.5rem;
-        border-radius: 15px;
+        border-radius: 16px;
         color: white;
         text-align: center;
         margin-bottom: 1rem;
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(99, 102, 241, 0.1);
+        position: relative;
+        overflow: hidden;
     }
+    
+    .hero-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #0ea5e9, #6366f1, #8b5cf6);
+    }
+    
     .hero-metric {
-        font-size: 2.5rem;
-        font-weight: bold;
-        margin: 0;
-    }
-    .hero-label {
-        font-size: 0.9rem;
-        opacity: 0.9;
-    }
-    .alert-card {
-        padding: 1rem;
-        border-radius: 10px;
+        font-size: 2.25rem;
+        font-weight: 700;
         margin: 0.5rem 0;
+        background: linear-gradient(135deg, #fff 0%, #e2e8f0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
-    .alert-danger {
-        background: #fed7d7;
-        border-left: 4px solid #f56565;
+    
+    .hero-label {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
-    .alert-warning {
-        background: #fefcbf;
-        border-left: 4px solid #ed8936;
-    }
-    .alert-success {
-        background: #c6f6d5;
-        border-left: 4px solid #48bb78;
-    }
-    .status-approved { color: #48bb78; font-weight: bold; }
-    .status-declined { color: #f56565; font-weight: bold; }
-    .status-flagged { color: #ed8936; font-weight: bold; }
-    .nft-card {
-        background: linear-gradient(135deg, #1a365d 0%, #2d3748 100%);
-        padding: 2rem;
-        border-radius: 15px;
-        color: white;
-        border: 2px solid #4fd1c5;
-    }
-    .pof-card {
-        background: linear-gradient(135deg, #2d3748 0%, #1a365d 100%);
-        padding: 1.5rem;
+    
+    .metric-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        padding: 1.25rem;
         border-radius: 12px;
-        color: white;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        margin-bottom: 0.75rem;
     }
-    .pof-status-ok { color: #48bb78; }
-    .pof-status-risk { color: #f56565; }
-    .ethics-badge {
-        background: #e2e8f0;
-        padding: 0.5rem 1rem;
+    
+    .alert-card {
+        padding: 1rem 1.25rem;
+        border-radius: 12px;
+        margin: 0.75rem 0;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .alert-danger {
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        border: 1px solid #fecaca;
+    }
+    
+    .alert-warning {
+        background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        border: 1px solid #fde68a;
+    }
+    
+    .alert-success {
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        border: 1px solid #bbf7d0;
+    }
+    
+    .status-approved { color: #059669; font-weight: 600; }
+    .status-declined { color: #dc2626; font-weight: 600; }
+    .status-flagged { color: #d97706; font-weight: 600; }
+    
+    .nft-card {
+        background: linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #1e293b 100%);
+        padding: 2rem;
         border-radius: 20px;
-        display: inline-block;
-        margin: 0.25rem;
-        font-size: 0.85rem;
-    }
-    .demo-banner {
-        background: linear-gradient(90deg, #48bb78 0%, #38a169 100%);
         color: white;
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
+        border: 1px solid rgba(139, 92, 246, 0.4);
+        box-shadow: 0 8px 32px rgba(99, 102, 241, 0.15), 0 0 60px rgba(139, 92, 246, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .nft-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+    }
+    
+    .pof-card {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        padding: 1.5rem;
+        border-radius: 16px;
+        color: white;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    
+    .pof-status-ok { color: #10b981; }
+    .pof-status-risk { color: #ef4444; }
+    
+    .ethics-badge {
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0.25rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .demo-banner {
+        background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        color: white;
+        padding: 0.75rem 1.25rem;
+        border-radius: 10px;
         text-align: center;
         margin-bottom: 1rem;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
     }
+    
     .disclaimer {
-        background-color: #f7fafc;
-        padding: 1rem;
-        border-radius: 5px;
-        border-left: 4px solid #4299e1;
-        font-size: 0.85rem;
-        color: #4a5568;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        padding: 1.25rem;
+        border-radius: 12px;
+        border-left: 4px solid #3b82f6;
+        font-size: 0.875rem;
+        color: #475569;
+        line-height: 1.6;
     }
-    .chat-message { padding: 1rem; border-radius: 10px; margin: 0.5rem 0; }
-    .user-message { background-color: #e2e8f0; text-align: right; }
+    
+    .chat-message {
+        padding: 1rem 1.25rem;
+        border-radius: 16px;
+        margin: 0.75rem 0;
+        line-height: 1.6;
+    }
+    
+    .user-message {
+        background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+        border: 1px solid #a5b4fc;
+        text-align: right;
+        margin-left: 20%;
+    }
+    
     .guardian-message {
-        background: linear-gradient(135deg, #667eea22 0%, #764ba222 100%);
-        border-left: 4px solid #667eea;
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        border: 1px solid #bbf7d0;
+        border-left: 4px solid #10b981;
+        margin-right: 20%;
     }
+    
     .step-indicator {
         display: flex;
         justify-content: center;
-        gap: 2rem;
-        margin-bottom: 1.5rem;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
     }
+    
     .step {
         text-align: center;
-        opacity: 0.5;
+        opacity: 0.4;
+        transition: all 0.3s ease;
+        padding: 0.5rem 1.5rem;
     }
+    
     .step.active {
         opacity: 1;
     }
+    
     .step-number {
-        width: 32px;
-        height: 32px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
-        background: #667eea;
-        color: white;
+        background: #cbd5e1;
+        color: #64748b;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-weight: bold;
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        transition: all 0.3s ease;
     }
+    
     .step.active .step-number {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+    
+    .step p {
+        margin: 0;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #64748b;
+    }
+    
+    .step.active p {
+        color: #1e293b;
+    }
+    
+    .section-header {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .card-container {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1rem;
+    }
+    
+    .gradient-text {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 700;
+    }
+    
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 12px;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    
+    .stat-label {
+        font-size: 0.75rem;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 0.25rem;
+    }
+    
+    div[data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    }
+    
+    .stButton > button {
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+    
+    .stButton > button[kind="primary"] {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        border: none;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+    
+    .stButton > button[kind="primary"]:hover {
+        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        transform: translateY(-1px);
+    }
+    
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 0.5rem;
+        background: #f1f5f9;
+        padding: 0.5rem;
+        border-radius: 12px;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        border-radius: 8px;
+        font-weight: 500;
+        color: #64748b;
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background: white !important;
+        color: #0f172a !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stProgress > div > div > div {
+        background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    }
+    
+    .stMetric {
+        background: #f8fafc;
+        padding: 1rem;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .stExpander {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        background: white;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -363,18 +597,19 @@ def display_hero_dashboard(country, city, salary, savings, vtc_profile):
             <div class="hero-card">
                 <p class="hero-label">Data Confidence</p>
                 <p class="hero-metric">{confidence*100:.0f}%</p>
-                <p class="hero-label">Cross-Verified</p>
+                <p class="hero-label">Cross-Verified Sources</p>
             </div>
             """, unsafe_allow_html=True)
         
         with col2:
-            pof_color = "#48bb78" if pof_status else "#f56565"
-            pof_icon = "✓" if pof_status else "⚠"
+            pof_icon = "✓" if pof_status else "!"
+            pof_bg = "linear-gradient(135deg, #064e3b 0%, #059669 100%)" if pof_status else "linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%)"
+            pof_border = "rgba(16, 185, 129, 0.4)" if pof_status else "rgba(239, 68, 68, 0.4)"
             st.markdown(f"""
-            <div class="hero-card" style="background: linear-gradient(135deg, {'#38a169' if pof_status else '#c53030'} 0%, {'#48bb78' if pof_status else '#f56565'} 100%);">
+            <div class="hero-card" style="background: {pof_bg}; border-color: {pof_border};">
                 <p class="hero-label">Proof of Funds</p>
                 <p class="hero-metric">{pof_icon} {pof_percent:.0f}%</p>
-                <p class="hero-label">EUR {savings:,.0f} / {visa_fund_eur:,.0f}</p>
+                <p class="hero-label">€{savings:,.0f} / €{visa_fund_eur:,.0f}</p>
             </div>
             """, unsafe_allow_html=True)
         
@@ -393,7 +628,7 @@ def display_hero_dashboard(country, city, salary, savings, vtc_profile):
             st.markdown(f"""
             <div class="hero-card">
                 <p class="hero-label">VTC Profile</p>
-                <p class="hero-metric" style="font-size: 1.5rem;">{vtc_profile.capitalize()}</p>
+                <p class="hero-metric" style="font-size: 1.75rem;">{vtc_profile.capitalize()}</p>
                 <p class="hero-label">Transaction Controls</p>
             </div>
             """, unsafe_allow_html=True)
