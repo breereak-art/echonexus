@@ -34,7 +34,7 @@ class VTCSandboxClient:
         """Generate unique session ID for sandbox testing"""
         return hashlib.sha256(f"{time.time()}".encode()).hexdigest()[:16]
     
-    def _make_request(self, endpoint: str, method: str = "POST", data: Dict = None) -> Dict:
+    def _make_request(self, endpoint: str, method: str = "POST", data: Optional[Dict] = None) -> Dict:
         """Make request to VTC sandbox API - uses real API when credentials available"""
         
         if not self.sandbox_mode:
@@ -89,7 +89,7 @@ class VTCSandboxClient:
         result["simulated"] = True
         return result
     
-    def _simulate_response(self, endpoint: str, data: Dict = None) -> Dict:
+    def _simulate_response(self, endpoint: str, data: Optional[Dict] = None) -> Dict:
         """Simulate VTC API response for sandbox testing"""
         
         if endpoint == "controls/create":
@@ -204,7 +204,7 @@ class VTCSandboxClient:
         category: str,
         location: str = "domestic",
         merchant_name: str = "",
-        rules: Dict = None
+        rules: Optional[Dict] = None
     ) -> Dict:
         """Authorize a transaction through VTC"""
         
