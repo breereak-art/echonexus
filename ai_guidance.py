@@ -97,8 +97,8 @@ def generate_ai_guidance(
     
     Best Financial Path Found:
     - Path Name: {top_path.get('path_name', 'Unknown') if top_path else 'N/A'}
-    - Success Probability: {top_path.get('approval_prob', 0)*100:.0f}% if top_path else 'N/A'
-    - Projected 12-month Savings: €{top_path.get('total_savings_12m', 0):,.0f} if top_path else 'N/A'
+    - Success Probability: {(top_path.get('approval_prob', 0)*100):.0f}% if top_path else 'N/A'
+    - Projected 12-month Savings: €{(top_path.get('total_savings_12m', 0)):,.0f} if top_path else 'N/A'
     
     Generate a warm, encouraging 60-second audio guidance script (about 150 words) that:
     1. Greets them as their "Financial Guardian from {country}"
