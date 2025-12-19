@@ -1,166 +1,138 @@
 """
 EchoWorld Community - Reddit-style social platform
-Phase 1: Core social features (posts, comments, likes)
+Phase 2: Persistent database storage with user profiles and karma system
 """
 
 import streamlit as st
 from datetime import datetime
-import json
 from typing import List, Dict
+from social_db import get_community_db
 
 def init_community_state():
     """Initialize community session state"""
-    if "posts" not in st.session_state:
-        st.session_state.posts = []
-    if "user_handle" not in st.session_state:
-        st.session_state.user_handle = "Anonymous Explorer"
-    if "post_counter" not in st.session_state:
-        st.session_state.post_counter = 0
+    if "current_user_id" not in st.session_state:
+        st.session_state.current_user_id = None
 
+def get_current_user_id(display_name: str) -> int:
+    """Get or create user in database"""
+    db = get_community_db()
+    return db.get_or_create_user(display_name)
 
-def create_post(title: str, content: str, category: str = "General") -> Dict:
-    """Create a new post"""
-    st.session_state.post_counter += 1
-    return {
-        "id": st.session_state.post_counter,
-        "title": title,
-        "content": content,
-        "category": category,
-        "author": st.session_state.user_handle,
-        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
-        "likes": 0,
-        "comments": [],
-        "liked_by": []
-    }
-
-
-def add_comment_to_post(post_id: int, comment_text: str) -> bool:
-    """Add a comment to a post"""
-    for post in st.session_state.posts:
-        if post["id"] == post_id:
-            post["comments"].append({
-                "author": st.session_state.user_handle,
-                "text": comment_text,
-                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
-                "likes": 0,
-                "liked_by": []
-            })
-            return True
-    return False
-
-
-def like_post(post_id: int) -> bool:
-    """Like/unlike a post"""
-    for post in st.session_state.posts:
-        if post["id"] == post_id:
-            if st.session_state.user_handle not in post["liked_by"]:
-                post["liked_by"].append(st.session_state.user_handle)
-                post["likes"] += 1
-                return True
-            else:
-                post["liked_by"].remove(st.session_state.user_handle)
-                post["likes"] -= 1
-                return True
-    return False
-
-
-def like_comment(post_id: int, comment_index: int) -> bool:
-    """Like/unlike a comment"""
-    for post in st.session_state.posts:
-        if post["id"] == post_id:
-            if comment_index < len(post["comments"]):
-                comment = post["comments"][comment_index]
-                if st.session_state.user_handle not in comment["liked_by"]:
-                    comment["liked_by"].append(st.session_state.user_handle)
-                    comment["likes"] += 1
-                    return True
-                else:
-                    comment["liked_by"].remove(st.session_state.user_handle)
-                    comment["likes"] -= 1
-                    return True
-    return False
-
-
-def get_posts_by_category(category: str = None) -> List[Dict]:
-    """Get posts filtered by category"""
-    if category is None or category == "All":
-        return st.session_state.posts[::-1]
-    return [p for p in st.session_state.posts if p["category"] == category][::-1]
-
-
-def display_post(post: Dict, post_container):
+def display_post(post: Dict):
     """Display a single post with comments and likes"""
-    with post_container:
-        # Post header
-        col1, col2, col3 = st.columns([2, 1, 1])
-        with col1:
-            st.markdown(f"**{post['title']}**")
-            st.caption(f"by {post['author']} • {post['timestamp']}")
-        with col2:
-            st.caption(f"📁 {post['category']}")
-        with col3:
-            st.caption(f"❤️ {post['likes']} likes")
-        
-        # Post content
-        st.markdown(post['content'])
-        
-        # Like button
-        col1, col2, col3 = st.columns([1, 3, 1])
-        with col1:
-            if st.button(f"❤️ Like ({post['likes']})", key=f"like_{post['id']}", use_container_width=True):
-                like_post(post['id'])
+    db = get_community_db()
+    
+    # Post header
+    col1, col2, col3 = st.columns([2, 1, 1])
+    with col1:
+        st.markdown(f"**{post['title']}**")
+        st.caption(f"by {post['display_name']} • {post['created_at'].strftime('%Y-%m-%d %H:%M')}")
+    with col2:
+        st.caption(f"📁 {post['category']}")
+    with col3:
+        st.caption(f"❤️ {post['likes_count']} likes • 💬 {post['comments_count']} comments")
+    
+    # Post content
+    st.markdown(post['content'])
+    
+    # Check if user has liked this post
+    user_liked = False
+    if st.session_state.current_user_id:
+        user_liked = db.has_user_liked_post(st.session_state.current_user_id, post['id'])
+    
+    # Like button
+    col1, col2, col3 = st.columns([1, 3, 1])
+    with col1:
+        like_text = "❤️ Unlike" if user_liked else "🤍 Like"
+        if st.button(f"{like_text} ({post['likes_count']})", key=f"like_post_{post['id']}", use_container_width=True):
+            if st.session_state.current_user_id:
+                db.like_post(st.session_state.current_user_id, post['id'])
                 st.rerun()
-        
-        st.divider()
-        
-        # Comments section
-        st.markdown(f"**Comments ({len(post['comments'])})**")
-        
-        if post['comments']:
-            for idx, comment in enumerate(post['comments']):
-                with st.container(border=True):
-                    col1, col2 = st.columns([3, 1])
-                    with col1:
-                        st.markdown(f"**{comment['author']}**")
-                        st.caption(comment['timestamp'])
-                    with col2:
-                        st.caption(f"❤️ {comment['likes']}")
-                    
-                    st.markdown(comment['text'])
-                    
-                    if st.button(f"❤️ Like comment", key=f"like_comment_{post['id']}_{idx}", use_container_width=False):
-                        like_comment(post['id'], idx)
+            else:
+                st.error("Please set your name to like posts")
+    
+    st.divider()
+    
+    # Comments section
+    st.markdown(f"**Comments ({post['comments_count']})**")
+    
+    comments = db.get_comments(post['id'])
+    if comments:
+        for comment in comments:
+            with st.container(border=True):
+                col1, col2 = st.columns([3, 1])
+                with col1:
+                    st.markdown(f"**{comment['display_name']}**")
+                    st.caption(comment['created_at'].strftime('%Y-%m-%d %H:%M'))
+                with col2:
+                    st.caption(f"❤️ {comment['likes_count']}")
+                
+                st.markdown(comment['content'])
+                
+                # Check if user has liked this comment
+                comment_user_liked = False
+                if st.session_state.current_user_id:
+                    comment_user_liked = db.has_user_liked_comment(st.session_state.current_user_id, comment['id'])
+                
+                like_text = "❤️ Unlike" if comment_user_liked else "🤍 Like"
+                if st.button(f"{like_text} comment", key=f"like_comment_{comment['id']}", use_container_width=False):
+                    if st.session_state.current_user_id:
+                        db.like_comment(st.session_state.current_user_id, comment['id'])
                         st.rerun()
-        
-        # Add comment
-        new_comment = st.text_input(
-            "Add a comment...",
-            key=f"comment_input_{post['id']}",
-            placeholder="Share your experience or thoughts..."
-        )
-        if new_comment:
-            col1, col2 = st.columns([3, 1])
-            with col2:
-                if st.button("Post", key=f"post_comment_{post['id']}"):
-                    add_comment_to_post(post['id'], new_comment)
+                    else:
+                        st.error("Please set your name to like comments")
+    
+    # Add comment
+    new_comment = st.text_input(
+        "Add a comment...",
+        key=f"comment_input_{post['id']}",
+        placeholder="Share your experience or thoughts..."
+    )
+    if new_comment:
+        col1, col2 = st.columns([3, 1])
+        with col2:
+            if st.button("Post", key=f"post_comment_{post['id']}"):
+                if st.session_state.current_user_id:
+                    db.create_comment(post['id'], st.session_state.current_user_id, new_comment)
                     st.rerun()
-
+                else:
+                    st.error("Please set your name to comment")
 
 def render_community_interface():
-    """Main community interface"""
+    """Main community interface with persistent database"""
     init_community_state()
+    db = get_community_db()
     
     st.header("🌍 EchoWorld Community")
     st.markdown("Share your experiences, ask questions, and learn from others relocating globally.")
     
-    # User handle setter
+    # User handle setter in sidebar
     with st.sidebar:
         st.markdown("### Community Settings")
-        st.session_state.user_handle = st.text_input(
+        display_name = st.text_input(
             "Your Display Name",
-            value=st.session_state.user_handle,
+            value="",
             placeholder="Choose a display name"
         )
+        
+        if display_name and display_name.strip():
+            if st.button("Set Name", use_container_width=True):
+                st.session_state.current_user_id = get_current_user_id(display_name.strip())
+                st.success(f"Welcome, {display_name}! 👋")
+                st.rerun()
+        
+        if st.session_state.current_user_id:
+            user_profile = db.get_user_profile(st.session_state.current_user_id)
+            if user_profile:
+                st.divider()
+                st.markdown("### Your Profile")
+                st.metric("Karma Points", user_profile['karma_points'])
+                st.metric("Posts", user_profile['posts_count'])
+                st.metric("Comments", user_profile['comments_count'])
+    
+    if not st.session_state.current_user_id:
+        st.info("👤 Please set your display name in the sidebar to participate in the community!")
+        return
     
     # Main tabs
     community_tab1, community_tab2 = st.tabs(["📰 Browse Posts", "✍️ Create Post"])
@@ -174,13 +146,14 @@ def render_community_interface():
             ["All", "General", "Visa & Immigration", "Cost of Living", "Job Market", "Relocation Tips", "Language & Culture", "Safety & Health"]
         )
         
-        posts = get_posts_by_category(category_filter)
+        posts = db.get_posts(category_filter)
         
         if not posts:
             st.info("No posts yet. Be the first to share your experience! 🚀")
         else:
             for post in posts:
-                display_post(post, st.container())
+                display_post(post)
+                st.divider()
     
     with community_tab2:
         st.subheader("Share Your Story")
@@ -209,8 +182,7 @@ def render_community_interface():
                 elif not post_content:
                     st.error("Please enter your story")
                 else:
-                    new_post = create_post(post_title, post_content, post_category)
-                    st.session_state.posts.append(new_post)
+                    db.create_post(st.session_state.current_user_id, post_title, post_content, post_category)
                     st.success("Posted! 🎉")
                     st.rerun()
         

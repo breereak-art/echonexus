@@ -3,17 +3,21 @@
 ## Overview
 EchoWorld Nexus is a comprehensive Streamlit-based financial simulation tool that helps users plan international relocations. It provides AI-powered guidance, Visa Transaction Controls (VTC) simulation, Monte Carlo financial projections, and blockchain-based credential verification.
 
-## Recent Changes (December 19, 2025 - Phase 1: Community Launch)
-- **Reddit-Style Community Platform Phase 1**: New "🌍 Community" tab with posts, comments, and likes
-- **Core Social Features**:
-  - Create posts with title, content, and category
-  - Comment on posts with real-time threading
-  - Like/unlike posts and comments
-  - Browse posts filtered by category
-  - Display names for anonymity/flexibility
-- **Categories Available**: General, Visa & Immigration, Cost of Living, Job Market, Relocation Tips, Language & Culture, Safety & Health
-- **Storage**: Phase 1 uses session state (in-memory). Phase 2 will add persistent database storage
-- **Next**: Phase 2 will add persistent storage, user profiles, and karma/reputation system
+## Recent Changes (December 19, 2025 - Phase 2: Persistent Community Complete)
+- **Phase 2: Persistent Database & User Profiles**:
+  - All posts, comments, and likes now save to PostgreSQL database
+  - User profiles with karma points system
+  - Karma rewards: +5 for posts, +2 for comments, +1 for likes
+  - User stats: posts count, comments count, karma points
+  - User authentication via display name
+  - Check if user liked posts/comments (prevents duplicate likes)
+- **Database Schema**: 5 tables (users, posts, comments, likes, with full referential integrity)
+- **Categories**: General, Visa & Immigration, Cost of Living, Job Market, Relocation Tips, Language & Culture, Safety & Health
+- **How It Works**: 
+  - Set your display name in the sidebar to join the community
+  - Your profile auto-tracks your activity and karma
+  - Posts and comments persist across page refreshes
+  - Ready for Vercel deployment with PostgreSQL connection
 
 ### Previous Session Changes (December 19, 2025)
 - **Real-Time API Integration**: Added World Bank economic indicators API
