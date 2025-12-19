@@ -79,7 +79,7 @@ st.markdown("""
     
     .tagline {
         text-align: center;
-        color: #64748b;
+        color: #cbd5e1;
         font-size: 1.1rem;
         margin-bottom: 2rem;
         font-weight: 400;
@@ -224,12 +224,12 @@ st.markdown("""
     }
     
     .disclaimer {
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        background: rgba(30, 41, 59, 0.5);
         padding: 1.25rem;
         border-radius: 12px;
         border-left: 4px solid #3b82f6;
         font-size: 0.875rem;
-        color: #475569;
+        color: #cbd5e1;
         line-height: 1.6;
     }
     
@@ -260,9 +260,9 @@ st.markdown("""
         gap: 1rem;
         margin-bottom: 2rem;
         padding: 1.5rem;
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        background: rgba(30, 41, 59, 0.5);
         border-radius: 16px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid rgba(226, 232, 240, 0.1);
     }
     
     .step {
@@ -301,17 +301,17 @@ st.markdown("""
         margin: 0;
         font-size: 0.85rem;
         font-weight: 500;
-        color: #64748b;
+        color: #94a3b8;
     }
     
     .step.active p {
-        color: #1e293b;
+        color: #cbd5e1;
     }
     
     .section-header {
         font-size: 1.5rem;
         font-weight: 700;
-        color: #0f172a;
+        color: #e2e8f0;
         margin-bottom: 1rem;
         display: flex;
         align-items: center;
@@ -319,12 +319,13 @@ st.markdown("""
     }
     
     .card-container {
-        background: white;
+        background: rgba(30, 41, 59, 0.5);
         border-radius: 16px;
         padding: 1.5rem;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(226, 232, 240, 0.2);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         margin-bottom: 1rem;
+        color: #e2e8f0;
     }
     
     .gradient-text {
@@ -343,26 +344,27 @@ st.markdown("""
     .stat-item {
         text-align: center;
         padding: 1rem;
-        background: #f8fafc;
+        background: rgba(30, 41, 59, 0.5);
         border-radius: 12px;
+        border: 1px solid rgba(226, 232, 240, 0.1);
     }
     
     .stat-value {
         font-size: 1.5rem;
         font-weight: 700;
-        color: #0f172a;
+        color: #cbd5e1;
     }
     
     .stat-label {
         font-size: 0.75rem;
-        color: #64748b;
+        color: #94a3b8;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         margin-top: 0.25rem;
     }
     
     div[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+        background: linear-gradient(180deg, rgba(30, 41, 59, 0.5) 0%, rgba(30, 41, 59, 0.3) 100%);
     }
     
     .stButton > button {
@@ -384,7 +386,7 @@ st.markdown("""
     
     .stTabs [data-baseweb="tab-list"] {
         gap: 0.5rem;
-        background: #f1f5f9;
+        background: rgba(30, 41, 59, 0.5);
         padding: 0.5rem;
         border-radius: 12px;
     }
@@ -392,13 +394,13 @@ st.markdown("""
     .stTabs [data-baseweb="tab"] {
         border-radius: 8px;
         font-weight: 500;
-        color: #64748b;
+        color: #94a3b8;
     }
     
     .stTabs [aria-selected="true"] {
-        background: white !important;
-        color: #0f172a !important;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        background: rgba(30, 41, 59, 0.8) !important;
+        color: #e2e8f0 !important;
+        box-shadow: 0 1px 3px rgba(99, 102, 241, 0.3);
     }
     
     .stProgress > div > div > div {
@@ -406,16 +408,18 @@ st.markdown("""
     }
     
     .stMetric {
-        background: #f8fafc;
+        background: rgba(30, 41, 59, 0.5);
         padding: 1rem;
         border-radius: 12px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid rgba(226, 232, 240, 0.1);
+        color: #e2e8f0;
     }
     
     .stExpander {
-        border: 1px solid #e2e8f0;
+        border: 1px solid rgba(226, 232, 240, 0.2);
         border-radius: 12px;
-        background: white;
+        background: rgba(30, 41, 59, 0.5);
+        color: #e2e8f0;
     }
 </style>
 """, unsafe_allow_html=True)
