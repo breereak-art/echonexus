@@ -352,6 +352,123 @@ class CommunityDB:
         finally:
             cur.close()
             conn.close()
+    
+    def search_posts(self, query: str) -> List[Dict]:
+        """Search posts by title and content"""
+        conn = self.get_connection()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        
+        try:
+            search_term = f"%{query}%"
+            cur.execute("""
+                SELECT p.*, u.display_name 
+                FROM posts p
+                JOIN users u ON p.user_id = u.id
+                WHERE p.title ILIKE %s OR p.content ILIKE %s
+                ORDER BY p.created_at DESC
+            """, (search_term, search_term))
+            
+            return cur.fetchall()
+        finally:
+            cur.close()
+            conn.close()
+    
+    def update_post(self, post_id: int, user_id: int, title: str, content: str) -> bool:
+        """Update a post (only by author)"""
+        conn = self.get_connection()
+        cur = conn.cursor()
+        
+        try:
+            cur.execute("SELECT user_id FROM posts WHERE id = %s", (post_id,))
+            result = cur.fetchone()
+            
+            if not result or result[0] != user_id:
+                return False
+            
+            cur.execute(
+                """UPDATE posts SET title = %s, content = %s, updated_at = NOW() 
+                   WHERE id = %s""",
+                (title, content, post_id)
+            )
+            conn.commit()
+            return True
+        finally:
+            cur.close()
+            conn.close()
+    
+    def delete_post(self, post_id: int, user_id: int) -> bool:
+        """Delete a post (only by author)"""
+        conn = self.get_connection()
+        cur = conn.cursor()
+        
+        try:
+            cur.execute("SELECT user_id FROM posts WHERE id = %s", (post_id,))
+            result = cur.fetchone()
+            
+            if not result or result[0] != user_id:
+                return False
+            
+            cur.execute("DELETE FROM posts WHERE id = %s", (post_id,))
+            cur.execute(
+                "UPDATE users SET posts_count = posts_count - 1 WHERE id = %s",
+                (user_id,)
+            )
+            conn.commit()
+            return True
+        finally:
+            cur.close()
+            conn.close()
+    
+    def update_comment(self, comment_id: int, user_id: int, content: str) -> bool:
+        """Update a comment (only by author)"""
+        conn = self.get_connection()
+        cur = conn.cursor()
+        
+        try:
+            cur.execute("SELECT user_id FROM comments WHERE id = %s", (comment_id,))
+            result = cur.fetchone()
+            
+            if not result or result[0] != user_id:
+                return False
+            
+            cur.execute(
+                """UPDATE comments SET content = %s, updated_at = NOW() 
+                   WHERE id = %s""",
+                (content, comment_id)
+            )
+            conn.commit()
+            return True
+        finally:
+            cur.close()
+            conn.close()
+    
+    def delete_comment(self, comment_id: int, user_id: int) -> bool:
+        """Delete a comment (only by author)"""
+        conn = self.get_connection()
+        cur = conn.cursor()
+        
+        try:
+            cur.execute("SELECT user_id, post_id FROM comments WHERE id = %s", (comment_id,))
+            result = cur.fetchone()
+            
+            if not result or result[0] != user_id:
+                return False
+            
+            post_id = result[1]
+            cur.execute("DELETE FROM comments WHERE id = %s", (comment_id,))
+            cur.execute(
+                "UPDATE users SET comments_count = comments_count - 1 WHERE id = %s",
+                (user_id,)
+            )
+            cur.execute(
+                "UPDATE posts SET comments_count = comments_count - 1 WHERE id = %s",
+                (post_id,)
+            )
+            conn.commit()
+            return True
+        finally:
+            cur.close()
+            conn.close()
 
 _db_instance = None
 
