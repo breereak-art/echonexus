@@ -1256,33 +1256,46 @@ def display_audio_guidance(country, city, vtc_summary, mc_results, salary, savin
                     use_ai=True
                 )
                 
+                if not guidance_text:
+                    raise ValueError("Guidance text is empty")
+                
                 audio_bytes = generate_audio_guidance(guidance_text, include_watermark=True)
                 
-                if audio_bytes:
+                if audio_bytes and len(audio_bytes) > 100:
                     st.session_state.guidance_audio_bytes = audio_bytes
                     st.session_state.guidance_text = guidance_text
                     st.session_state.audio_generated = True
+                    st.success("Audio guidance generated! Click play to listen.")
                     st.rerun()
                 else:
-                    st.warning("Audio generation unavailable. Displaying text guidance:")
+                    st.warning("Audio service unavailable. Displaying text guidance instead:")
                     st.info(guidance_text)
+                    st.session_state.guidance_text = guidance_text
+                    st.session_state.audio_generated = False
+                    st.rerun()
             except Exception as e:
-                st.error(f"Guidance generation failed. Using fallback text mode.")
+                st.error(f"Error generating guidance: {str(e)[:100]}")
                 fallback_text = f"Welcome to {city}, {country}. Based on your profile, your success probability is strong. Consider the VTC recommendations to optimize your spending."
                 st.info(fallback_text)
+                st.session_state.guidance_text = fallback_text
+                st.session_state.audio_generated = False
     
-    if st.session_state.get("audio_generated") and st.session_state.get("guidance_audio_bytes"):
-        try:
-            audio_bytes = st.session_state.guidance_audio_bytes
-            st.audio(audio_bytes, format="audio/mp3")
-            duration = estimate_audio_duration(st.session_state.get("guidance_text", ""))
-            st.caption(f"🎧 Estimated duration: {duration:.0f} seconds")
-            st.caption("💬 " + st.session_state.get("guidance_text", "")[:200] + "...")
-        except Exception as e:
-            st.warning(f"Audio playback issue. Showing text guidance instead:")
-            st.info(st.session_state.get("guidance_text", ""))
+    if st.session_state.get("guidance_text"):
+        if st.session_state.get("audio_generated") and st.session_state.get("guidance_audio_bytes"):
+            try:
+                audio_bytes = st.session_state.guidance_audio_bytes
+                st.audio(audio_bytes, format="audio/mp3")
+                duration = estimate_audio_duration(st.session_state.get("guidance_text", ""))
+                st.caption(f"🎧 Estimated duration: {duration:.0f} seconds")
+                st.caption("💬 " + st.session_state.get("guidance_text", "")[:200] + "...")
+            except Exception as e:
+                st.warning(f"Audio playback issue: {str(e)[:50]}")
+                st.info(st.session_state.get("guidance_text", ""))
+        else:
+            st.info("📝 Text Guidance:")
+            st.markdown(st.session_state.get("guidance_text", ""))
         
-        with st.expander("View Guidance Transcript"):
+        with st.expander("View Full Guidance Transcript"):
             st.markdown(st.session_state.get("guidance_text", ""))
     
     st.divider()

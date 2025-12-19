@@ -5,9 +5,68 @@ Generates audio guidance with ethical watermarks
 
 import os
 import io
+import sys
 import tempfile
 from typing import Optional
 from gtts import gTTS
+
+
+def generate_audio_guidance(
+    text: str,
+    language: str = "en",
+    include_watermark: bool = True
+) -> Optional[bytes]:
+    """
+    Generate audio guidance from text using gTTS
+    
+    Args:
+        text: The guidance text to convert to speech
+        language: Language code (default: en)
+        include_watermark: Whether to add ethical disclaimer
+        
+    Returns:
+        Audio bytes or None if failed
+    """
+    
+    if not text or not isinstance(text, str):
+        print(f"[TTS ERROR] Invalid text input: {type(text)}", file=sys.stderr)
+        return None
+    
+    if include_watermark:
+        watermark = "Note: This is a simulated financial planning tool. "
+        full_text = watermark + text
+    else:
+        full_text = text
+    
+    # Limit text length to prevent API issues
+    if len(full_text) > 400:
+        full_text = full_text[:400]
+    
+    try:
+        print(f"[TTS LOG] Generating audio for text length: {len(full_text)}", file=sys.stderr)
+        
+        tts = gTTS(text=full_text, lang=language, slow=False, tld='com')
+        
+        audio_buffer = io.BytesIO()
+        tts.write_to_fp(audio_buffer)
+        audio_buffer.seek(0)
+        
+        audio_data = audio_buffer.getvalue()
+        
+        print(f"[TTS LOG] Audio generated successfully: {len(audio_data)} bytes", file=sys.stderr)
+        
+        # Verify we got valid audio data
+        if audio_data and len(audio_data) > 100:
+            return audio_data
+        else:
+            print(f"[TTS ERROR] Invalid audio data: {len(audio_data)} bytes", file=sys.stderr)
+            return None
+        
+    except Exception as e:
+        print(f"[TTS ERROR] Exception during audio generation: {str(e)}", file=sys.stderr)
+        import traceback
+        traceback.print_exc()
+        return None
 
 
 def generate_audio_guidance_file(
@@ -52,54 +111,6 @@ def generate_audio_guidance_file(
             return temp_path
         else:
             print(f"TTS file invalid: {os.path.getsize(temp_path) if os.path.exists(temp_path) else 0} bytes")
-            return None
-        
-    except Exception as e:
-        print(f"TTS Error: {e}")
-        return None
-
-
-def generate_audio_guidance(
-    text: str,
-    language: str = "en",
-    include_watermark: bool = True
-) -> Optional[bytes]:
-    """
-    Generate audio guidance from text using gTTS
-    
-    Args:
-        text: The guidance text to convert to speech
-        language: Language code (default: en)
-        include_watermark: Whether to add ethical disclaimer
-        
-    Returns:
-        Audio bytes or None if failed
-    """
-    
-    if include_watermark:
-        watermark = "Note: This is a simulated financial planning tool. "
-        full_text = watermark + text
-    else:
-        full_text = text
-    
-    try:
-        # Limit text length to prevent API issues
-        if len(full_text) > 400:
-            full_text = full_text[:400]
-        
-        tts = gTTS(text=full_text, lang=language, slow=False, tld='com')
-        
-        audio_buffer = io.BytesIO()
-        tts.write_to_fp(audio_buffer)
-        audio_buffer.seek(0)
-        
-        audio_data = audio_buffer.getvalue()
-        
-        # Verify we got valid audio data
-        if audio_data and len(audio_data) > 100:
-            return audio_data
-        else:
-            print(f"TTS returned invalid data: {len(audio_data)} bytes")
             return None
         
     except Exception as e:
