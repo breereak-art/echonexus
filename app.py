@@ -223,8 +223,8 @@ st.markdown("""
         margin: 0.25rem;
         font-size: 0.8rem;
         font-weight: 500;
-        color: #475569;
-        border: 1px solid #e2e8f0;
+        color: #1e293b;
+        border: 1px solid #cbd5e1;
     }
     
     .demo-banner {
@@ -253,6 +253,7 @@ st.markdown("""
         border-radius: 16px;
         margin: 0.75rem 0;
         line-height: 1.6;
+        color: #1e293b;
     }
     
     .user-message {
@@ -260,6 +261,11 @@ st.markdown("""
         border: 1px solid #a5b4fc;
         text-align: right;
         margin-left: 20%;
+        color: #1e293b;
+    }
+    
+    .user-message strong {
+        color: #1e293b;
     }
     
     .guardian-message {
@@ -267,6 +273,11 @@ st.markdown("""
         border: 1px solid #bbf7d0;
         border-left: 4px solid #10b981;
         margin-right: 20%;
+        color: #064e3b;
+    }
+    
+    .guardian-message strong {
+        color: #064e3b;
     }
     
     .step-indicator {
