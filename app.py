@@ -456,6 +456,10 @@ if "sim_results" not in st.session_state:
     st.session_state.sim_results = None
 if "audio_generated" not in st.session_state:
     st.session_state.audio_generated = False
+if "guidance_audio" not in st.session_state:
+    st.session_state.guidance_audio = None
+if "guidance_text" not in st.session_state:
+    st.session_state.guidance_text = None
 if "collab_budget" not in st.session_state:
     st.session_state.collab_budget = None
 if "dao_community" not in st.session_state:
@@ -1268,10 +1272,14 @@ def display_audio_guidance(country, city, vtc_summary, mc_results, salary, savin
                 st.info(fallback_text)
     
     if st.session_state.get("audio_generated") and st.session_state.get("guidance_audio"):
-        st.audio(st.session_state.guidance_audio, format="audio/mp3")
-        
-        duration = estimate_audio_duration(st.session_state.get("guidance_text", ""))
-        st.caption(f"Estimated duration: {duration:.0f} seconds")
+        try:
+            st.audio(st.session_state.guidance_audio, format="audio/mp3")
+            duration = estimate_audio_duration(st.session_state.get("guidance_text", ""))
+            st.caption(f"🎧 Estimated duration: {duration:.0f} seconds")
+            st.caption("💬 " + st.session_state.get("guidance_text", "")[:200] + "...")
+        except Exception as e:
+            st.warning(f"Audio playback issue. Showing text guidance instead:")
+            st.info(st.session_state.get("guidance_text", ""))
         
         with st.expander("View Guidance Transcript"):
             st.markdown(st.session_state.get("guidance_text", ""))
