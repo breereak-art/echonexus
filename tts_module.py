@@ -10,6 +10,55 @@ from typing import Optional
 from gtts import gTTS
 
 
+def generate_audio_guidance_file(
+    text: str,
+    language: str = "en",
+    include_watermark: bool = True
+) -> Optional[str]:
+    """
+    Generate audio guidance from text using gTTS and save to temp file
+    
+    Args:
+        text: The guidance text to convert to speech
+        language: Language code (default: en)
+        include_watermark: Whether to add ethical disclaimer
+        
+    Returns:
+        Path to audio file or None if failed
+    """
+    
+    if include_watermark:
+        watermark = "Note: This is a simulated financial planning tool. "
+        full_text = watermark + text
+    else:
+        full_text = text
+    
+    try:
+        # Limit text length to prevent API issues
+        if len(full_text) > 400:
+            full_text = full_text[:400]
+        
+        tts = gTTS(text=full_text, lang=language, slow=False, tld='com')
+        
+        # Create temp file
+        temp_file = tempfile.NamedTemporaryFile(suffix=".mp3", delete=False)
+        temp_path = temp_file.name
+        temp_file.close()
+        
+        tts.save(temp_path)
+        
+        # Verify file exists and has content
+        if os.path.exists(temp_path) and os.path.getsize(temp_path) > 100:
+            return temp_path
+        else:
+            print(f"TTS file invalid: {os.path.getsize(temp_path) if os.path.exists(temp_path) else 0} bytes")
+            return None
+        
+    except Exception as e:
+        print(f"TTS Error: {e}")
+        return None
+
+
 def generate_audio_guidance(
     text: str,
     language: str = "en",

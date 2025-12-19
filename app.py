@@ -27,7 +27,7 @@ from vtc_api import (
 )
 from monte_carlo_engine import run_monte_carlo, compare_paths
 from ai_guidance import generate_guardian_guidance, get_ethical_disclaimer
-from tts_module import generate_audio_guidance, estimate_audio_duration
+from tts_module import generate_audio_guidance, generate_audio_guidance_file, estimate_audio_duration
 from nft_module import (
     create_mobility_passport_metadata, prepare_mint_transaction,
     get_nft_preview_card, check_web3_availability
@@ -1256,10 +1256,10 @@ def display_audio_guidance(country, city, vtc_summary, mc_results, salary, savin
                     use_ai=True
                 )
                 
-                audio_bytes = generate_audio_guidance(guidance_text, include_watermark=True)
+                audio_path = generate_audio_guidance_file(guidance_text, include_watermark=True)
                 
-                if audio_bytes:
-                    st.session_state.guidance_audio = audio_bytes
+                if audio_path:
+                    st.session_state.guidance_audio_path = audio_path
                     st.session_state.guidance_text = guidance_text
                     st.session_state.audio_generated = True
                     st.rerun()
@@ -1271,12 +1271,10 @@ def display_audio_guidance(country, city, vtc_summary, mc_results, salary, savin
                 fallback_text = f"Welcome to {city}, {country}. Based on your profile, your success probability is strong. Consider the VTC recommendations to optimize your spending."
                 st.info(fallback_text)
     
-    if st.session_state.get("audio_generated") and st.session_state.get("guidance_audio"):
+    if st.session_state.get("audio_generated") and st.session_state.get("guidance_audio_path"):
         try:
-            audio_data = st.session_state.guidance_audio
-            if isinstance(audio_data, bytes):
-                audio_data = BytesIO(audio_data)
-            st.audio(audio_data, format="audio/mp3")
+            audio_path = st.session_state.guidance_audio_path
+            st.audio(audio_path, format="audio/mp3")
             duration = estimate_audio_duration(st.session_state.get("guidance_text", ""))
             st.caption(f"🎧 Estimated duration: {duration:.0f} seconds")
             st.caption("💬 " + st.session_state.get("guidance_text", "")[:200] + "...")
