@@ -148,18 +148,33 @@ st.markdown("""
     }
     
     .alert-danger {
-        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-        border: 1px solid #fecaca;
+        background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+        border: 1px solid #f87171;
+        color: #fecaca;
+    }
+    
+    .alert-danger strong {
+        color: #fca5a5;
     }
     
     .alert-warning {
-        background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-        border: 1px solid #fde68a;
+        background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+        border: 1px solid #fbbf24;
+        color: #fcd34d;
+    }
+    
+    .alert-warning strong {
+        color: #fde68a;
     }
     
     .alert-success {
-        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-        border: 1px solid #bbf7d0;
+        background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+        border: 1px solid #6ee7b7;
+        color: #a7f3d0;
+    }
+    
+    .alert-success strong {
+        color: #d1fae5;
     }
     
     .status-approved { color: #059669; font-weight: 600; }
