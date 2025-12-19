@@ -34,13 +34,24 @@ def generate_audio_guidance(
         full_text = text
     
     try:
-        tts = gTTS(text=full_text, lang=language, slow=False)
+        # Limit text length to prevent API issues
+        if len(full_text) > 400:
+            full_text = full_text[:400]
+        
+        tts = gTTS(text=full_text, lang=language, slow=False, tld='com')
         
         audio_buffer = io.BytesIO()
         tts.write_to_fp(audio_buffer)
         audio_buffer.seek(0)
         
-        return audio_buffer.getvalue()
+        audio_data = audio_buffer.getvalue()
+        
+        # Verify we got valid audio data
+        if audio_data and len(audio_data) > 100:
+            return audio_data
+        else:
+            print(f"TTS returned invalid data: {len(audio_data)} bytes")
+            return None
         
     except Exception as e:
         print(f"TTS Error: {e}")
