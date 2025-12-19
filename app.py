@@ -1273,7 +1273,10 @@ def display_audio_guidance(country, city, vtc_summary, mc_results, salary, savin
     
     if st.session_state.get("audio_generated") and st.session_state.get("guidance_audio"):
         try:
-            st.audio(st.session_state.guidance_audio, format="audio/mp3")
+            audio_data = st.session_state.guidance_audio
+            if isinstance(audio_data, bytes):
+                audio_data = BytesIO(audio_data)
+            st.audio(audio_data, format="audio/mp3")
             duration = estimate_audio_duration(st.session_state.get("guidance_text", ""))
             st.caption(f"🎧 Estimated duration: {duration:.0f} seconds")
             st.caption("💬 " + st.session_state.get("guidance_text", "")[:200] + "...")
