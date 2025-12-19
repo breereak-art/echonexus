@@ -1,6 +1,6 @@
 """
 EchoWorld Community - Reddit-style social platform
-Phase 3: Edit/Delete posts and comments, Search functionality
+Phase 4: Sorting, filtering, and trending
 """
 
 import streamlit as st
@@ -30,7 +30,7 @@ def display_post(post: Dict):
     col1, col2, col3 = st.columns([2, 1, 1])
     with col1:
         st.markdown(f"**{post['title']}**")
-        st.caption(f"by {post['display_name']} • {post['created_at'].strftime('%Y-%m-%d %H:%M')}")
+        st.caption(f"by {post['display_name']} (⭐ {post['karma_points']}) • {post['created_at'].strftime('%Y-%m-%d %H:%M')}")
     with col2:
         st.caption(f"📁 {post['category']}")
     with col3:
@@ -131,7 +131,7 @@ def display_post(post: Dict):
                     st.error("Please set your name to comment")
 
 def render_community_interface():
-    """Main community interface with persistent database"""
+    """Main community interface with sorting and filtering"""
     init_community_state()
     db = get_community_db()
     
@@ -172,17 +172,34 @@ def render_community_interface():
     with community_tab1:
         st.subheader("Community Posts")
         
-        # Filter by category
-        category_filter = st.selectbox(
-            "Filter by category",
-            ["All", "General", "Visa & Immigration", "Cost of Living", "Job Market", "Relocation Tips", "Language & Culture", "Safety & Health"]
-        )
+        # Filters and sorting
+        col1, col2 = st.columns(2)
+        with col1:
+            category_filter = st.selectbox(
+                "Filter by category",
+                ["All", "General", "Visa & Immigration", "Cost of Living", "Job Market", "Relocation Tips", "Language & Culture", "Safety & Health"]
+            )
         
-        posts = db.get_posts(category_filter)
+        with col2:
+            sort_by = st.selectbox(
+                "Sort by",
+                [
+                    ("Newest", "newest"),
+                    ("Oldest", "oldest"),
+                    ("Most Popular", "popular"),
+                    ("Most Discussed", "discussed"),
+                    ("Trending", "trending")
+                ],
+                format_func=lambda x: x[0]
+            )
+            sort_value = sort_by[1]
+        
+        posts = db.get_posts(category_filter, sort_value)
         
         if not posts:
             st.info("No posts yet. Be the first to share your experience! 🚀")
         else:
+            st.caption(f"📊 Showing {len(posts)} post(s)")
             for post in posts:
                 # Handle edit mode
                 if st.session_state.edit_post_id == post['id']:

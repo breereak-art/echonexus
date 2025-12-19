@@ -3,25 +3,25 @@
 ## Overview
 EchoWorld Nexus is a comprehensive Streamlit-based financial simulation tool that helps users plan international relocations. It provides AI-powered guidance, Visa Transaction Controls (VTC) simulation, Monte Carlo financial projections, and blockchain-based credential verification.
 
-## Recent Changes (December 19, 2025 - Phase 3: Edit, Delete, Search Complete)
-- **Phase 3: Edit/Delete & Search Functionality**:
-  - **Edit Posts/Comments**: Authors can edit their own posts and comments with ✏️ button
-  - **Delete Posts/Comments**: Authors can delete with 🗑️ button (updates counts/karma)
-  - **Search Tab**: New search interface to find posts by title or content (case-insensitive)
-  - **Author Protection**: Only post/comment authors can edit/delete (enforced at DB level)
-  - **Full Cleanup**: Deleting posts removes all associated comments, updates all counts
-- **UI Improvements**:
-  - Action buttons (Like, Edit, Delete) clearly labeled with emoji
-  - Edit mode inline with Save/Cancel options
-  - 3 tabs: Browse Posts, Create Post, Search Posts
-- **Database Security**: Foreign key constraints prevent orphaned data, cascading deletes
-- **Complete Community Features**:
-  - Create, Read, Update, Delete posts and comments (CRUD)
-  - Like system with duplicate prevention
-  - Search across all posts
-  - User profiles with karma tracking
-  - Category filtering
-- **Ready for**: Vercel deployment with full data persistence
+## Recent Changes (December 19, 2025 - Phase 4: Sorting & Filtering Complete)
+- **Phase 4: Advanced Sorting & Filtering**:
+  - **Sort Options**: Newest, Oldest, Most Popular (by likes), Most Discussed (by comments), Trending (engagement score)
+  - **Trending Algorithm**: Weighted by likes + 2x comments, sorted newest first (time decay built-in)
+  - **Category Filtering**: Combined with all sort options
+  - **Author Karma Display**: See karma points next to author name on each post
+  - **Post Count**: Display number of posts matching current filters
+- **Complete Feature Set**:
+  - ✅ Create, Read, Update, Delete posts and comments (CRUD)
+  - ✅ Like system with duplicate prevention
+  - ✅ Search across all posts (title and content)
+  - ✅ Advanced sorting (5 algorithms)
+  - ✅ Category filtering
+  - ✅ User profiles with karma tracking
+  - ✅ Author protection and validation
+  - ✅ Cascading deletes with count updates
+- **UI**: 3-tab interface (Browse with sorting, Create, Search)
+- **Database**: 4 tables with full referential integrity
+- **Status**: Production-ready for Vercel deployment
 
 ### Previous Session Changes (December 19, 2025)
 - **Real-Time API Integration**: Added World Bank economic indicators API

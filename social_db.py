@@ -139,28 +139,38 @@ class CommunityDB:
             cur.close()
             conn.close()
     
-    def get_posts(self, category: Optional[str] = None) -> List[Dict]:
-        """Get all posts, optionally filtered by category"""
+    def get_posts(self, category: Optional[str] = None, sort_by: str = "newest") -> List[Dict]:
+        """Get all posts with filtering and sorting"""
         conn = self.get_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor)
         
         try:
+            category_filter = ""
             if category and category != "All":
-                cur.execute("""
-                    SELECT p.*, u.display_name 
-                    FROM posts p
-                    JOIN users u ON p.user_id = u.id
-                    WHERE p.category = %s
-                    ORDER BY p.created_at DESC
-                """, (category,))
-            else:
-                cur.execute("""
-                    SELECT p.*, u.display_name 
-                    FROM posts p
-                    JOIN users u ON p.user_id = u.id
-                    ORDER BY p.created_at DESC
-                """)
+                category_filter = f"WHERE p.category = '{category}'"
             
+            order_clause = ""
+            if sort_by == "newest":
+                order_clause = "ORDER BY p.created_at DESC"
+            elif sort_by == "oldest":
+                order_clause = "ORDER BY p.created_at ASC"
+            elif sort_by == "popular":
+                order_clause = "ORDER BY p.likes_count DESC, p.created_at DESC"
+            elif sort_by == "discussed":
+                order_clause = "ORDER BY p.comments_count DESC, p.created_at DESC"
+            elif sort_by == "trending":
+                order_clause = "ORDER BY (p.likes_count + p.comments_count * 2) DESC, p.created_at DESC"
+            else:
+                order_clause = "ORDER BY p.created_at DESC"
+            
+            query = f"""
+                SELECT p.*, u.display_name, u.karma_points
+                FROM posts p
+                JOIN users u ON p.user_id = u.id
+                {category_filter}
+                {order_clause}
+            """
+            cur.execute(query)
             return cur.fetchall()
         finally:
             cur.close()
