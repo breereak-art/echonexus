@@ -759,6 +759,136 @@ SAMPLE_TRANSACTIONS = [
 
 
 from typing import Optional, Dict, Any, List
+import requests
+import time
+
+# ============================================================================
+# REAL-TIME API FUNCTIONS (2025)
+# ============================================================================
+
+def get_world_bank_indicator(country_code: str, indicator_code: str, max_retries: int = 2) -> Optional[float]:
+    """
+    Fetch real-time World Bank indicator via API.
+    Falls back to hardcoded data if API fails.
+    
+    Common indicators:
+    - NY.GDP.PCAP.CD: GDP per capita (current US$)
+    - FP.CPI.TOTL.ZG: Inflation (annual %)
+    - SL.UEM.TOTL.ZS: Unemployment rate (% of labor force)
+    """
+    try:
+        url = f"https://api.worldbank.org/v2/country/{country_code}/indicator/{indicator_code}?format=json&per_page=1"
+        response = requests.get(url, timeout=5)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data[1] and len(data[1]) > 0:
+                value = data[1][0].get('value')
+                if value is not None:
+                    return float(value)
+    except Exception as e:
+        pass
+    
+    return None
+
+
+def get_currency_exchange_rate(base_currency: str = "USD", target_currency: str = "EUR") -> Optional[float]:
+    """
+    Fetch real-time currency exchange rates.
+    Uses ExchangeRate-API free tier (1500 requests/month).
+    Falls back to hardcoded rates if API fails.
+    """
+    try:
+        # Using Frankfurter API (free, ECB-sourced, no key needed)
+        url = f"https://api.frankfurter.app/latest?from={base_currency}&to={target_currency}"
+        response = requests.get(url, timeout=5)
+        
+        if response.status_code == 200:
+            data = response.json()
+            rate = data.get('rates', {}).get(target_currency)
+            if rate:
+                return float(rate)
+    except Exception as e:
+        pass
+    
+    return None
+
+
+def get_visa_requirements_api(passport_country: str = "USA", destination_country: str = "Germany") -> Optional[Dict[str, Any]]:
+    """
+    Attempt to fetch visa requirements from online sources.
+    Currently falls back to hardcoded data.
+    Future: Integrate with Travel Buddy AI API when key is available.
+    """
+    # Placeholder for future Travel Buddy AI integration
+    # For now, returns None to trigger fallback to hardcoded data
+    return None
+
+
+def update_world_bank_data_live(country: str, country_code: str) -> Dict[str, Any]:
+    """
+    Attempt to update World Bank data with live API calls.
+    Falls back gracefully to hardcoded data if any API call fails.
+    """
+    result = WORLD_BANK_DATA.get(country, {}).copy()
+    
+    try:
+        # Try to fetch GDP per capita
+        gdp = get_world_bank_indicator(country_code, "NY.GDP.PCAP.CD")
+        if gdp is not None:
+            result["gdp_per_capita"] = gdp
+    except:
+        pass
+    
+    try:
+        # Try to fetch inflation rate
+        inflation = get_world_bank_indicator(country_code, "FP.CPI.TOTL.ZG")
+        if inflation is not None:
+            result["inflation_rate"] = inflation
+    except:
+        pass
+    
+    try:
+        # Try to fetch unemployment rate
+        unemployment = get_world_bank_indicator(country_code, "SL.UEM.TOTL.ZS")
+        if unemployment is not None:
+            result["unemployment_rate"] = unemployment
+    except:
+        pass
+    
+    return result
+
+
+def update_exchange_rates_live() -> Dict[str, float]:
+    """
+    Attempt to update currency exchange rates with live API calls.
+    Falls back to hardcoded rates if API fails.
+    """
+    result = CURRENCY_EXCHANGE_RATES.copy()
+    
+    try:
+        # Fetch EUR rate vs USD
+        eur_rate = get_currency_exchange_rate("USD", "EUR")
+        if eur_rate:
+            result["EUR"] = eur_rate
+            
+            # Derive other rates from EUR
+            gbp_rate = get_currency_exchange_rate("GBP", "EUR")
+            if gbp_rate:
+                result["GBP"] = gbp_rate / eur_rate
+            
+            jpy_rate = get_currency_exchange_rate("JPY", "EUR")
+            if jpy_rate:
+                result["JPY"] = jpy_rate / eur_rate
+    except:
+        pass
+    
+    return result
+
+
+# ============================================================================
+# ORIGINAL FUNCTIONS WITH ENHANCED DATA
+# ============================================================================
 
 def get_cost_of_living(country: str, city: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """Get cost of living data for a country/city"""
