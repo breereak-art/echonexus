@@ -48,6 +48,7 @@ from dao_governance import (
     get_dao_manager, create_demo_community, prepare_mainnet_nft_mint,
     get_dao_proposal_types
 )
+from social_module import render_community_interface
 
 st.set_page_config(
     page_title="EchoWorld Nexus",
@@ -584,7 +585,8 @@ def main():
     main_tabs = st.tabs([
         "📊 Simulate & Optimize",
         "🎙️ Voice & Guidance", 
-        "🚀 Export & Advanced"
+        "🚀 Export & Advanced",
+        "🌍 Community"
     ])
     
     with main_tabs[0]:
@@ -595,6 +597,9 @@ def main():
     
     with main_tabs[2]:
         display_advanced_tab(country, city, salary_eur, current_savings, vtc_profile)
+    
+    with main_tabs[3]:
+        render_community_interface()
     
     st.divider()
     st.markdown(
