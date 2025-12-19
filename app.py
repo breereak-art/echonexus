@@ -1284,7 +1284,9 @@ def display_audio_guidance(country, city, vtc_summary, mc_results, salary, savin
         if st.session_state.get("audio_generated") and st.session_state.get("guidance_audio_bytes"):
             try:
                 audio_bytes = st.session_state.guidance_audio_bytes
-                st.audio(audio_bytes, format="audio/mp3")
+                # Convert bytes to BytesIO for better Streamlit compatibility
+                audio_buffer = BytesIO(audio_bytes)
+                st.audio(audio_buffer, format="audio/mp3")
                 duration = estimate_audio_duration(st.session_state.get("guidance_text", ""))
                 st.caption(f"🎧 Estimated duration: {duration:.0f} seconds")
                 st.caption("💬 " + st.session_state.get("guidance_text", "")[:200] + "...")
